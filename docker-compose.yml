@@ -1,0 +1,27 @@
+
+services: # this is the container that makes up our app
+  db: # separate container that will network together with the other containers
+    image: postgres:15-alpine
+    environment: # bootstrap a database called trade with user and password
+      POSTGRES_USER: trade_user
+      POSTGRES_PASSWORD: trade_password
+      POSTGRES_DB: trade
+    ports: # mapping between the container port and our host machine's port
+      - "5432:5432"
+    volumes: # attaches a volume named db_data to Postgres' data directory
+      - db_data:/var/lib/postgresql/data   # keeps data between restarts
+
+  backend:
+    build: ./backend                       # Dockerfile lives in /backend
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 #FastAPI listens on this port inside the container
+    volumes:
+      - ./backend:/app/backend             # live reload during dev
+    environment:
+      DATABASE_URL: postgresql://trade_user:trade_password@db:5432/trade # db:5432 reaches Postgres
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:
