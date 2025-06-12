@@ -1,50 +1,42 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy import text, Column, Integer, String
-from .core.database import Base, engine, SessionLocal
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-from .models.firm import Firm
+# backend/app/main.py
+
+from fastapi import FastAPI, HTTPException
+from sqlalchemy import text
+
+# Shared database setup
+from backend.app.core.database import Base, engine
+
+# Import your firm router (defined in api/firm.py)
+from backend.app.api.firm import router as firm_router
+from .api.order import router as order_router
+from .api.trade import router as trade_router
+from .api.leaderboard import router as leaderboard_router
+from .api.strategy import router as strategy_router
 app = FastAPI()
 
-class FirmIn(BaseModel):
-    name: str
+# Create all tables on startup (dev convenience)
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
-class FirmOut(BaseModel):
-    id: int
-    name: str
-    class Config:
-        orm_model = True
+# Mount the firm, order, and trade endpoints under /api
+app.include_router(firm_router, prefix="/api")
+app.include_router(order_router, prefix="/api")
+app.include_router(trade_router, prefix="/api")
+app.include_router(leaderboard_router, prefix="/api")
+app.include_router(strategy_router, prefix="/api")
 
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-@app.post("/firm", response_model=FirmOut)
-def create_firm(payload: FirmIn, db: Session = Depends(get_db)):
-    firm = Firm(name=payload.name)
-    db.add(firm)
-    db.commit()
-    db.refresh(firm)
-    return firm
+# Simple root endpoint
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.on_event("startup")
-def startup():
-    Base.metadata.create_all(bind=engine)
-
+# Health-check that also pings the database
 @app.get("/health")
 def health():
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        return {"status: ok"}
+        return {"status": "ok"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-

@@ -15,13 +15,33 @@ services: # this is the container that makes up our app
     build: ./backend                       # Dockerfile lives in /backend
     command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 #FastAPI listens on this port inside the container
     volumes:
-      - ./backend:/app/backend             # live reload during dev
+      - ./backend:/app/backend
+      - ./sandbox_runner:/app/sandbox_runner
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./sandbox_runner/runner.py:/app/runner.py
     environment:
       DATABASE_URL: postgresql://trade_user:trade_password@db:5432/trade # db:5432 reaches Postgres
     depends_on:
       - db
     ports:
       - "8000:8000"
+
+  runner:
+    build: ./sandbox_runner
+    entrypoint: ["python", "runner.py"]
+    command:
+        - "--strategy-id"
+        - "3"
+        - "--feed-file"
+        - "/app/data/test_feed.json"
+    volumes:
+        - ./sandbox_runner:/app
+        - ./data:/app/data
+    environment:
+        - BACKEND_URL=http://backend:8000
+    depends_on:
+        - backend
 
 volumes:
   db_data:

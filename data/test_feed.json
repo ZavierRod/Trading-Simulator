@@ -1,0 +1,5 @@
+[
+  { "symbol": "AAPL", "price": 150.0, "timestamp": "2025-06-11T10:00:00Z" },
+  { "symbol": "AAPL", "price": 151.0, "timestamp": "2025-06-11T10:00:01Z" },
+  { "symbol": "AAPL", "price": 149.5, "timestamp": "2025-06-11T10:00:02Z" }
+]
