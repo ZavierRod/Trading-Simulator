@@ -9,16 +9,44 @@ class Action:
 
 
 def initialize(ctx):
-    # Called once before the feed starts.
-    ctx["initialized"] = True
+    """
+    Called once before the feed starts.
+    We’ll keep a rolling list of recent prices
+    so that the strategy can decide when to buy
+    and when to sell.
+    """
+    ctx["prices"] = []
 
 
 def on_tick(ctx, tick):
-    # tick is a dict: {"symbol": "...", "price": ..., "timestamp": "..."}
-    # Always buy one share at the incoming price.
-    return Action(
-        symbol=tick["symbol"],
-        side="buy",
-        quantity=1,
-        price=tick["price"]
-    )
+    """
+    Simple mean‑reversion example:
+    * BUY when the price is more than 2 % below the 20‑tick average
+    * SELL when the price is more than 2 % above the 20‑tick average
+    Otherwise do nothing.
+    """
+    price = tick["price"]
+    ctx["prices"].append(price)
+
+    # Need enough history to compute an average
+    if len(ctx["prices"]) < 20:
+        return None
+
+    avg = sum(ctx["prices"][-20:]) / 20
+
+    if price < 0.98 * avg:
+        return Action(
+            symbol=tick["symbol"],
+            side="buy",
+            quantity=1,
+            price=price,
+        )
+    elif price > 1.02 * avg:
+        return Action(
+            symbol=tick["symbol"],
+            side="sell",
+            quantity=1,
+            price=price,
+        )
+
+    return None

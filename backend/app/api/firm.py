@@ -44,3 +44,9 @@ def create_firm(
     db.commit()
     db.refresh(firm)
     return firm
+
+
+
+@router.get("/firm", response_model=list[FirmOut])
+def list_firms(db: Session = Depends(get_db)):
+    return db.query(Firm).all()

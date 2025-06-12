@@ -3,6 +3,10 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+# Matching engine and Trade model
+from ..matching.engine import match_orders
+from ..models.trade import Trade as TradeModel
+
 # import your shared DB session factory
 from ..core.database import SessionLocal
 # import your ORM model and Pydantic schemas
@@ -40,6 +44,27 @@ def create_order(
     db.add(order)
     db.commit()
     db.refresh(order)
+    # ------------------------------------------------------------------
+    # Run the matching engine whenever a new order is created
+    open_orders = db.query(Order).filter(Order.quantity > 0).all()
+    new_trades = match_orders(open_orders)
+
+    for trade in new_trades:
+        # `trade` is expected to be a simple object (or dict‑like) with the
+        # attributes produced by `engine.match_orders`.  Adapt the field names
+        # below if your Trade model differs.
+        db.add(
+            TradeModel(
+                buy_order_id=trade.buy_order_id,
+                sell_order_id=trade.sell_order_id,
+                symbol=trade.symbol,
+                price=trade.price,
+                quantity=trade.quantity,
+            )
+        )
+    if new_trades:
+        db.commit()
+    # ------------------------------------------------------------------
     return order
 
 @router.get(

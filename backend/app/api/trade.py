@@ -49,7 +49,7 @@ def execute_match(
     db.commit()
     for t in new_trades:
         db.refresh(t)
-    return new_trades
+    return new_trades or [{"message": "No trades matched"}]
 
 @router.get(
     "/trades",

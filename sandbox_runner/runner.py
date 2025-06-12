@@ -21,6 +21,7 @@ def parse_args():
 
 def run_strategy(strategy_id: int, feed_file: str):
     # Fetch strategy code via HTTP with retry logic
+
     backend_url = os.getenv("BACKEND_URL", "http://backend:8000")
     max_retries = 10
     for attempt in range(1, max_retries + 1):
@@ -28,6 +29,8 @@ def run_strategy(strategy_id: int, feed_file: str):
             response = requests.get(f"{backend_url}/api/strategies/{strategy_id}")
             response.raise_for_status()
             code_text = response.json().get("code", "")
+            firm_id = response.json().get("firm_id")
+
             if not code_text:
                 raise ValueError(f"Empty code for strategy {strategy_id}")
             break
@@ -74,11 +77,11 @@ def run_strategy(strategy_id: int, feed_file: str):
             action = None
         if action:
             order_payload = {
-                "firm_id": strategy_id,
-                'symbol': action.symbol,
-                'side': action.side,
-                'quantity': action.quantity,
-                'price': action.price
+                "firm_id": firm_id,          # use the owning firm, not the strategy id
+                "symbol": action.symbol,
+                "side": action.side,
+                "quantity": action.quantity,
+                "price": action.price,
             }
             post_response = requests.post(f"{backend_url}/api/orders",
             json=order_payload
