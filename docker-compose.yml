@@ -22,11 +22,12 @@ services: # this is the container that makes up our app
       - ./sandbox_runner:/app/sandbox_runner
       - ./data:/data
       - ./data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock # host socket
       - ./sandbox_runner/runner.py:/app/runner.py
     environment:
       DATABASE_URL: postgresql://trade_user:trade_password@db:5432/trade # db:5432 reaches Postgres
       POSTGRES_DB: trade
+      DOCKER_HOST: unix:///var/run/docker.sock
     depends_on:
       db:
         condition: service_healthy
@@ -34,20 +35,13 @@ services: # this is the container that makes up our app
       - "8000:8000"
 
   runner:
+    profiles: ["runner"]          # built but not started unless explicitly invoked
     build: ./sandbox_runner
-    entrypoint: ["python", "runner.py"]
-    command:
-        - "--strategy-id"
-        - "8"
-        - "--feed-file"
-        - "/data/test_feed.json"
+    image: trading-simulation-game-runner:latest
+    command: ["true"]
     volumes:
-        - ./sandbox_runner:/app
-        - ./data:/data
-    environment:
-        - BACKEND_URL=http://backend:8000
-    depends_on:
-        - backend
+      - ./sandbox_runner:/app
+      - ./data:/data
 
 volumes:
   db_data:

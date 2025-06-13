@@ -2,11 +2,11 @@
 import requests
 import json
 
-with open("TestStrategy.py") as f:
+with open("tmp_strategy.py") as f:
     code = f.read()
 
 payload = {
-    "firm_id": 1,
+    "firm_id": 3,
     "code": code
 }
 

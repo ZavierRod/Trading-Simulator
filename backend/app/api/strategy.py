@@ -5,13 +5,14 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
 
-from sandbox_runner.runner import run_strategy as runner_run_strategy
+
 
 
 # import your shared DB session factory
 from ..core.database import SessionLocal
 # import your ORM model and Pydantic schemas
 from ..models.strategy import Strategy
+from ..utils.runner_launcher import launch_runner
 from ..schemas.strategy import StrategyIn, StrategyOut
 
 router = APIRouter(tags=["strategies"])
@@ -79,7 +80,7 @@ def run_strategy(
     if not strategy:
         raise HTTPException(status_code=404, detail=f"Strategy {strategy_id} not found")
     background_tasks.add_task(
-        runner_run_strategy,
+        launch_runner,
         strategy_id,
         "/app/data/test_feed.json",
     )
