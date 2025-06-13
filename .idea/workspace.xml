@@ -4,16 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b48f66d-3731-4aff-b29b-4e9c87b925a1" name="Changes" comment="I have been cooking lowkey.">
+    <list default="true" id="9b48f66d-3731-4aff-b29b-4e9c87b925a1" name="Changes" comment="Implement order–matching engine, verify buy/sell flow, add expanded test feed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TestStrategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/TestStrategy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/firm.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/firm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/order.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/order.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/api/trade.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/api/trade.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/test_feed.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/test_feed.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sandbox_runner/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sandbox_runner/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sandbox_runner/runner.py" beforeDir="false" afterPath="$PROJECT_DIR$/sandbox_runner/runner.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +109,7 @@
       <updated>1748487718432</updated>
       <workItem from="1748487719404" duration="1000" />
       <workItem from="1748491277493" duration="10106000" />
-      <workItem from="1749599985325" duration="40796000" />
+      <workItem from="1749599985325" duration="41231000" />
     </task>
     <task id="LOCAL-00001" summary="I have been cooking lowkey.">
       <option name="closed" value="true" />
@@ -127,7 +119,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749750481378</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Implement order–matching engine, verify buy/sell flow, add expanded test feed">
+      <option name="closed" value="true" />
+      <created>1749760183211</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749760183211</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -136,6 +136,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="I have been cooking lowkey." />
-    <option name="LAST_COMMIT_MESSAGE" value="I have been cooking lowkey." />
+    <MESSAGE value="Implement order–matching engine, verify buy/sell flow, add expanded test feed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement order–matching engine, verify buy/sell flow, add expanded test feed" />
   </component>
 </project>
