@@ -10,7 +10,7 @@ from ..models.trade import Trade as TradeModel
 # import your shared DB session factory
 from ..core.database import SessionLocal
 # import your ORM model and Pydantic schemas
-from ..models.order import Order
+from ..models.order import Order, OrderStatus
 from ..schemas.order import OrderIn, OrderOut
 
 router = APIRouter(tags=["orders"])
@@ -40,7 +40,10 @@ def create_order(
                       symbol=payload.symbol,
                       side=payload.side,
                       quantity=payload.quantity,
-                      price=payload.price,)
+                        remaining_qty=payload.quantity,
+                        status=OrderStatus.OPEN,
+                      price=payload.price,
+                  )
     db.add(order)
     db.commit()
     db.refresh(order)

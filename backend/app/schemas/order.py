@@ -2,6 +2,9 @@ from datetime import datetime
 from pydantic import Field
 from pydantic import BaseModel
 
+from backend.app.models.order import OrderStatus
+
+
 class OrderIn(BaseModel):
     firm_id: int
     symbol: str
@@ -15,6 +18,8 @@ class OrderOut(BaseModel):
     symbol: str
     side: str
     quantity: int
+    remaining_qty: int
+    status: OrderStatus
     price: float
     created_at: datetime
     class Config:

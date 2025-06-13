@@ -31,3 +31,4 @@ watchfiles==1.0.5
 websockets==15.0.1
 requests
 docker==7.0.0
+alembic

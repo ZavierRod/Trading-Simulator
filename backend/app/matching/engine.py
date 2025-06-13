@@ -1,5 +1,5 @@
 from typing import List
-from backend.app.models.order import Order
+from backend.app.models.order import Order, OrderStatus
 from ..models.trade import Trade
 
 def match_orders(orders: List[Order]):
@@ -13,18 +13,19 @@ def match_orders(orders: List[Order]):
         buys = []
         sells = []
         for order in group:
+            # only consider live orders
+            if order.status != OrderStatus.OPEN or order.remaining_qty <= 0:
+                continue
             if order.side == 'buy':
                 buys.append(order)
             elif order.side == 'sell':
                 sells.append(order)
-            else:
-                pass
         buys.sort(key=lambda x: x.price, reverse=True)
         sells.sort(key=lambda x: x.price)
         # you can only perform a trade if you have a buy and sell list
         # and the prices are not negative
         while buys and sells and buys[0].price >= sells[0].price:
-            qty = min(buys[0].quantity, sells[0].quantity)
+            qty = min(buys[0].remaining_qty, sells[0].remaining_qty)
             if qty > 0:
                 trade = Trade(
                     sell_order_id= sells[0].id,
@@ -34,10 +35,22 @@ def match_orders(orders: List[Order]):
                     price= buys[0].price,
                 )
                 trades.append(trade)
-                buys[0].quantity -= qty
-                sells[0].quantity -= qty
-                if buys[0].quantity <= 0:
+                # decrement open quantities
+                buys[0].remaining_qty -= qty
+                sells[0].remaining_qty -= qty
+
+                # update order status flags
+                if buys[0].remaining_qty == 0:
+                    buys[0].status = OrderStatus.FILLED
+                else:
+                    buys[0].status = OrderStatus.PARTIALLY_FILLED
+
+                if sells[0].remaining_qty == 0:
+                    sells[0].status = OrderStatus.FILLED
+                else:
+                    sells[0].status = OrderStatus.PARTIALLY_FILLED
+                if buys and buys[0].remaining_qty == 0:
                     buys.pop(0)
-                if sells[0].quantity <= 0:
+                if sells and sells[0].remaining_qty == 0:
                     sells.pop(0)
     return trades
