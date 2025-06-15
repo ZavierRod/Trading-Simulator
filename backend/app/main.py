@@ -12,12 +12,16 @@ from .api.order import router as order_router
 from .api.trade import router as trade_router
 from .api.leaderboard import router as leaderboard_router
 from .api.strategy import router as strategy_router
+from backend.app.api import position as position_api
 app = FastAPI()
 
 # Create all tables on startup (dev convenience)
+
+
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+
 
 # Mount the firm, order, and trade endpoints under /api
 app.include_router(firm_router, prefix="/api")
@@ -26,12 +30,18 @@ app.include_router(trade_router, prefix="/api")
 app.include_router(leaderboard_router, prefix="/api")
 app.include_router(strategy_router, prefix="/api")
 
+app.include_router(position_api.router, prefix="/api")
+
 # Simple root endpoint
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 # Health-check that also pings the database
+
+
 @app.get("/health")
 def health():
     try:

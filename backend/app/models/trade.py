@@ -1,3 +1,5 @@
+# models/trade.py
+
 from ..core.database import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, func
 
